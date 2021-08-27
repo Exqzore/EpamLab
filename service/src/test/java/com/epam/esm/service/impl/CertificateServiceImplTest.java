@@ -1,6 +1,10 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.CertificateDao;
+import com.epam.esm.dao.specification.certificate.FindAllCertificatesSpecification;
+import com.epam.esm.dao.specification.certificate.FindCertificatesByPartAndTagNameSpecification;
+import com.epam.esm.dao.specification.certificate.FindCertificatesByPartOfNameOrDescriptionSpecification;
+import com.epam.esm.dao.specification.certificate.FindCertificatesByTagNameSpecification;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Certificate;
@@ -16,11 +20,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 class CertificateServiceImplTest {
   @InjectMocks private CertificateServiceImpl certificateService;
@@ -34,78 +40,153 @@ class CertificateServiceImplTest {
   }
 
   @Test
-  void findByCriteria() {}
+  void findByCriteria1() {
+    // given
+    FindCertificatesByTagNameSpecification findCertificatesByTagNameSpecification =
+        mock(FindCertificatesByTagNameSpecification.class);
+    List<Certificate> certificates = Collections.emptyList();
+    List<CertificateDto> expected = Collections.emptyList();
+
+    // when
+    Mockito.when(certificateDao.findBySpecification(findCertificatesByTagNameSpecification, ""))
+        .thenReturn(certificates);
+    List<CertificateDto> actual = certificateService.findByCriteria(null, "", null);
+
+    // then
+    assertEquals(expected, actual);
+    Mockito.verify(certificateDao, Mockito.times(1))
+        .findBySpecification(findCertificatesByTagNameSpecification, "");
+  }
+
+  @Test
+  void findByCriteria2() {
+    // given
+    FindCertificatesByPartOfNameOrDescriptionSpecification
+        findCertificatesByPartOfNameOrDescriptionSpecification =
+            mock(FindCertificatesByPartOfNameOrDescriptionSpecification.class);
+    List<Certificate> certificates = Collections.emptyList();
+    List<CertificateDto> expected = Collections.emptyList();
+
+    // when
+    Mockito.when(
+            certificateDao.findBySpecification(
+                findCertificatesByPartOfNameOrDescriptionSpecification, ""))
+        .thenReturn(certificates);
+    List<CertificateDto> actual = certificateService.findByCriteria("", null, null);
+
+    // then
+    assertEquals(expected, actual);
+    Mockito.verify(certificateDao, Mockito.times(1))
+        .findBySpecification(findCertificatesByPartOfNameOrDescriptionSpecification, "");
+  }
+
+  @Test
+  void findByCriteria3() {
+    // given
+    FindCertificatesByPartAndTagNameSpecification FindCertificatesByPartAndTagNameSpecification =
+        mock(FindCertificatesByPartAndTagNameSpecification.class);
+    List<Certificate> certificates = Collections.emptyList();
+    List<CertificateDto> expected = Collections.emptyList();
+
+    // when
+    Mockito.when(
+            certificateDao.findBySpecification(FindCertificatesByPartAndTagNameSpecification, ""))
+        .thenReturn(certificates);
+    List<CertificateDto> actual = certificateService.findByCriteria("", "", null);
+
+    // then
+    assertEquals(expected, actual);
+    Mockito.verify(certificateDao, Mockito.times(1))
+        .findBySpecification(FindCertificatesByPartAndTagNameSpecification, "");
+  }
+
+  @Test
+  void findByCriteria4() {
+    // given
+    FindAllCertificatesSpecification findAllCertificatesSpecification =
+        mock(FindAllCertificatesSpecification.class);
+    List<Certificate> certificates = Collections.emptyList();
+    List<CertificateDto> expected = Collections.emptyList();
+
+    // when
+    Mockito.when(certificateDao.findBySpecification(findAllCertificatesSpecification, ""))
+        .thenReturn(certificates);
+    List<CertificateDto> actual = certificateService.findByCriteria("", "", null);
+
+    // then
+    assertEquals(expected, actual);
+    Mockito.verify(certificateDao, Mockito.times(1))
+        .findBySpecification(findAllCertificatesSpecification, "");
+  }
 
   @Test
   void findByIdPositive() {
+    // given
     long id = 1;
     String name = "name";
     String description = "description";
     Integer duration = 5;
     Double price = 1.5;
-    List<TagDto> tagDtoList = List.of(new TagDto(2L, "tag2"));
-    List<Tag> tags = List.of(new Tag(2L, "tag2"));
-    CertificateDto expectedDto = new CertificateDto();
-    expectedDto.setId(id);
-    expectedDto.setName(name);
-    expectedDto.setDescription(description);
-    expectedDto.setPrice(price);
-    expectedDto.setDuration(duration);
-    expectedDto.setTags(tagDtoList);
-    Certificate expected = new Certificate();
+    List<TagDto> tagDtoList = Collections.emptyList();
+    List<Tag> tags = Collections.emptyList();
+    CertificateDto expected = new CertificateDto();
     expected.setId(id);
     expected.setName(name);
     expected.setDescription(description);
     expected.setPrice(price);
     expected.setDuration(duration);
-    expected.setTags(tags);
+    expected.setTags(tagDtoList);
+    Certificate tag = new Certificate();
+    tag.setName(name);
+    tag.setDescription(description);
+    tag.setPrice(price);
+    tag.setDuration(duration);
+    tag.setTags(tags);
 
-    Mockito.when(certificateDao.findById(id)).thenReturn(Optional.of(expected));
-    Mockito.when(interpreter.toDto(expected)).thenReturn(expectedDto);
-    Mockito.when(tagService.findByCertificateId(id)).thenReturn(tagDtoList);
+    // when
+    Mockito.when(certificateDao.findById(id)).thenReturn(Optional.of(tag));
+    Mockito.when(interpreter.toDto(tag)).thenReturn(expected);
+    Mockito.when(tagService.findByCertificateId(expected.getId())).thenReturn(tagDtoList);
     CertificateDto actual = certificateService.findById(String.valueOf(id));
-    assertEquals(expectedDto, actual);
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(expected);
-    Mockito.verify(tagService, Mockito.times(1)).findByCertificateId(id);
+
+    // then
+    assertEquals(expected, actual);
+    Mockito.verify(interpreter, Mockito.times(1)).toDto(tag);
+    Mockito.verify(tagService, Mockito.times(1)).findByCertificateId(expected.getId());
     Mockito.verify(certificateDao, Mockito.times(1)).findById(id);
   }
 
   @Test
   void findByIdNegative() {
+    // given
     long id = 1;
 
+    // when
     Mockito.when(certificateDao.findById(id)).thenReturn(Optional.empty());
+
+    // then
     assertThrows(NotFoundException.class, () -> certificateService.findById(String.valueOf(id)));
     Mockito.verify(certificateDao, Mockito.times(1)).findById(id);
   }
 
   @Test
   void createPositive() {
+    // given
     long id = 1;
     String name = "name";
     String description = "description";
     Integer duration = 5;
     Double price = 1.5;
-    List<TagDto> expectedTagDtoList = List.of(new TagDto(2L, "tag2"));
-    List<Tag> expectedTags = List.of(new Tag(2L, "tag2"));
-    TagDto tagDto = new TagDto();
-    tagDto.setName("tag2");
-    List<TagDto> tagDtoList = List.of(tagDto);
-    List<Tag> tags = List.of(new Tag(2L, "tag2"));
-    CertificateDto expectedDto = new CertificateDto();
-    expectedDto.setId(id);
-    expectedDto.setName(name);
-    expectedDto.setDescription(description);
-    expectedDto.setPrice(price);
-    expectedDto.setDuration(duration);
-    expectedDto.setTags(expectedTagDtoList);
-    Certificate expected = new Certificate();
+    List<TagDto> expectedTagDtoList = Collections.emptyList();
+    List<TagDto> tagDtoList = Collections.emptyList();
+    List<Tag> tags = Collections.emptyList();
+    CertificateDto expected = new CertificateDto();
     expected.setId(id);
     expected.setName(name);
     expected.setDescription(description);
     expected.setPrice(price);
     expected.setDuration(duration);
-    expected.setTags(expectedTags);
+    expected.setTags(expectedTagDtoList);
     Certificate certificate = new Certificate();
     certificate.setId(id);
     certificate.setName(name);
@@ -120,29 +201,31 @@ class CertificateServiceImplTest {
     certificateDto.setDuration(duration);
     certificateDto.setTags(tagDtoList);
 
+    // when
     Mockito.when(interpreter.fromDto(certificateDto)).thenReturn(certificate);
-    Mockito.when(certificateDao.save(certificate)).thenReturn(Optional.of(expected));
-    Mockito.when(interpreter.toDto(expected)).thenReturn(expectedDto);
+    Mockito.when(certificateDao.save(certificate)).thenReturn(Optional.of(certificate));
+    Mockito.when(interpreter.toDto(certificate)).thenReturn(expected);
     Mockito.when(tagService.createTagsOnlyByNameOrId(tagDtoList)).thenReturn(expectedTagDtoList);
     CertificateDto actual = certificateService.create(certificateDto);
-    assertEquals(expectedDto, actual);
+
+    // then
+    assertEquals(expected, actual);
     Mockito.verify(interpreter, Mockito.times(1)).fromDto(certificateDto);
     Mockito.verify(certificateDao, Mockito.times(1)).save(certificate);
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(expected);
+    Mockito.verify(interpreter, Mockito.times(1)).toDto(certificate);
     Mockito.verify(tagService, Mockito.times(1)).createTagsOnlyByNameOrId(tagDtoList);
   }
 
   @Test
   void createNegative() {
+    // given
     long id = 1;
     String name = "name";
     String description = "description";
     Integer duration = 5;
     Double price = 1.5;
-    TagDto tagDto = new TagDto();
-    tagDto.setName("tag2");
-    List<TagDto> tagDtoList = List.of(tagDto);
-    List<Tag> tags = List.of(new Tag(2L, "tag2"));
+    List<TagDto> tagDtoList = Collections.emptyList();
+    List<Tag> tags = Collections.emptyList();
     Certificate certificate = new Certificate();
     certificate.setId(id);
     certificate.setName(name);
@@ -157,8 +240,11 @@ class CertificateServiceImplTest {
     certificateDto.setDuration(duration);
     certificateDto.setTags(tagDtoList);
 
+    // when
     Mockito.when(interpreter.fromDto(certificateDto)).thenReturn(certificate);
     Mockito.when(certificateDao.save(certificate)).thenReturn(Optional.empty());
+
+    // then
     assertThrows(CreationException.class, () -> certificateService.create(certificateDto));
     Mockito.verify(interpreter, Mockito.times(1)).fromDto(certificateDto);
     Mockito.verify(certificateDao, Mockito.times(1)).save(certificate);
@@ -166,39 +252,34 @@ class CertificateServiceImplTest {
 
   @Test
   void removeById() {
+    // given
     long id = 1;
 
+    // when
     certificateService.removeById(String.valueOf(id));
+
+    // then
     Mockito.verify(certificateDao, Mockito.times(1)).removeById(id);
   }
 
   @Test
   void updatePositive() {
+    // given
     long id = 1;
     String name = "name";
     String description = "description";
     Integer duration = 5;
     Double price = 1.5;
-    List<TagDto> expectedTagDtoList = List.of(new TagDto(2L, "tag2"));
-    List<Tag> expectedTags = List.of(new Tag(2L, "tag2"));
-    TagDto tagDto = new TagDto();
-    tagDto.setName("tag2");
-    List<TagDto> tagDtoList = List.of(tagDto);
-    List<Tag> tags = List.of(new Tag(2L, "tag2"));
-    CertificateDto expectedDto = new CertificateDto();
-    expectedDto.setId(id);
-    expectedDto.setName(name);
-    expectedDto.setDescription(description);
-    expectedDto.setPrice(price);
-    expectedDto.setDuration(duration);
-    expectedDto.setTags(expectedTagDtoList);
-    Certificate expected = new Certificate();
+    List<TagDto> expectedTagDtoList = Collections.emptyList();
+    List<TagDto> tagDtoList = Collections.emptyList();
+    List<Tag> tags = Collections.emptyList();
+    CertificateDto expected = new CertificateDto();
     expected.setId(id);
     expected.setName(name);
     expected.setDescription(description);
     expected.setPrice(price);
     expected.setDuration(duration);
-    expected.setTags(expectedTags);
+    expected.setTags(expectedTagDtoList);
     Certificate certificate = new Certificate();
     certificate.setId(id);
     certificate.setName(name);
@@ -213,29 +294,31 @@ class CertificateServiceImplTest {
     certificateDto.setDuration(duration);
     certificateDto.setTags(tagDtoList);
 
+    // when
     Mockito.when(interpreter.fromDto(certificateDto)).thenReturn(certificate);
-    Mockito.when(certificateDao.update(certificate)).thenReturn(Optional.of(expected));
-    Mockito.when(interpreter.toDto(expected)).thenReturn(expectedDto);
+    Mockito.when(certificateDao.update(certificate)).thenReturn(Optional.of(certificate));
+    Mockito.when(interpreter.toDto(certificate)).thenReturn(expected);
     Mockito.when(tagService.createTagsOnlyByNameOrId(tagDtoList)).thenReturn(expectedTagDtoList);
     CertificateDto actual = certificateService.update(String.valueOf(id), certificateDto);
-    assertEquals(expectedDto, actual);
+
+    // then
+    assertEquals(expected, actual);
     Mockito.verify(interpreter, Mockito.times(1)).fromDto(certificateDto);
     Mockito.verify(certificateDao, Mockito.times(1)).update(certificate);
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(expected);
+    Mockito.verify(interpreter, Mockito.times(1)).toDto(certificate);
     Mockito.verify(tagService, Mockito.times(1)).createTagsOnlyByNameOrId(tagDtoList);
   }
 
   @Test
   void updateNegative() {
+    // given
     long id = 1;
     String name = "name";
     String description = "description";
     Integer duration = 5;
     Double price = 1.5;
-    TagDto tagDto = new TagDto();
-    tagDto.setName("tag2");
-    List<TagDto> tagDtoList = List.of(tagDto);
-    List<Tag> tags = List.of(new Tag(2L, "tag2"));
+    List<TagDto> tagDtoList = Collections.emptyList();
+    List<Tag> tags = Collections.emptyList();
     Certificate certificate = new Certificate();
     certificate.setId(id);
     certificate.setName(name);
@@ -250,9 +333,14 @@ class CertificateServiceImplTest {
     certificateDto.setDuration(duration);
     certificateDto.setTags(tagDtoList);
 
+    // when
     Mockito.when(interpreter.fromDto(certificateDto)).thenReturn(certificate);
     Mockito.when(certificateDao.update(certificate)).thenReturn(Optional.empty());
-    assertThrows(CreationException.class, () -> certificateService.update(String.valueOf(id) ,certificateDto));
+
+    // then
+    assertThrows(
+        CreationException.class,
+        () -> certificateService.update(String.valueOf(id), certificateDto));
     Mockito.verify(interpreter, Mockito.times(1)).fromDto(certificateDto);
     Mockito.verify(certificateDao, Mockito.times(1)).update(certificate);
   }

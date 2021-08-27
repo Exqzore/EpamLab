@@ -170,6 +170,7 @@ public class CertificateServiceImpl implements CertificateService {
   }
 
   @Override
+  @Transactional
   public void removeById(String id) {
     List<String> errors = StringIdValidator.idValidate(id);
     if (!errors.isEmpty()) {

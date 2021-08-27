@@ -27,7 +27,6 @@ class TagServiceImplTest {
   @InjectMocks private TagServiceImpl tagService;
   @Mock private TagDao tagDao;
   @Mock private TagFormatInterpreter interpreter;
-  @Mock private FindAllTagsSpecification findAllTagsSpecification;
 
   @BeforeEach
   public void init() {
@@ -36,26 +35,20 @@ class TagServiceImplTest {
 
   @Test
   void findAll() {
-    //    //    List<TagDto> tagDtoListExpected = List.of(new TagDto(1L, "tag1"), new TagDto(2L,
-    // "tag2"));
-    //    //    List<Tag> tagsExpected = List.of(new Tag(1L, "tag1"), new Tag(2L, "tag2"));
-    //    List<TagDto> tagDtoListExpected = Collections.emptyList();
-    //    List<Tag> tagsExpected = Collections.emptyList();
-    //
-    //    Mockito.when(tagDao.findBySpecification(null)).thenReturn(tagsExpected);
-    //    List<TagDto> actual = tagService.findAll();
-    //    assertEquals(tagDtoListExpected, actual);
-    //    Mockito.verify(tagDao, Mockito.times(1)).findBySpecification(null);
-  }
+    // given
+    FindAllTagsSpecification findAllTagsSpecification =
+            mock(FindAllTagsSpecification.class);
+    List<TagDto> expected = Collections.emptyList();
+    List<Tag> tags = Collections.emptyList();
 
-  //    @Override
-  //    public List<TagDto> findByCertificateId(long certificateId) {
-  //      return tagDao
-  //              .findBySpecification(new FindTagsByCertificateIdSpecification(certificateId))
-  //              .stream()
-  //              .map(interpreter::toDto)
-  //              .collect(Collectors.toList());
-  //    }
+    // when
+    Mockito.when(tagDao.findBySpecification(findAllTagsSpecification)).thenReturn(tags);
+    List<TagDto> actual = tagService.findAll();
+
+    // then
+    assertEquals(expected, actual);
+    Mockito.verify(tagDao, Mockito.times(1)).findBySpecification(findAllTagsSpecification);
+  }
 
   @Test
   void findByCertificateId() {
@@ -81,28 +74,36 @@ class TagServiceImplTest {
     // given
     long id = 10;
     String name = "Tag";
-    TagDto expectedDto = new TagDto(id, name);
-    Tag expected = new Tag(id, name);
+    TagDto expected = new TagDto(id, name);
+    Tag tag = new Tag(id, name);
 
-    Mockito.when(tagDao.findById(id)).thenReturn(Optional.of(expected));
-    Mockito.when(interpreter.toDto(expected)).thenReturn(expectedDto);
+    // when
+    Mockito.when(tagDao.findById(id)).thenReturn(Optional.of(tag));
+    Mockito.when(interpreter.toDto(tag)).thenReturn(expected);
     TagDto actual = tagService.findById(String.valueOf(id));
-    assertEquals(expectedDto, actual);
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(expected);
+
+    // then
+    assertEquals(expected, actual);
+    Mockito.verify(interpreter, Mockito.times(1)).toDto(tag);
     Mockito.verify(tagDao, Mockito.times(1)).findById(id);
   }
 
   @Test
   void findByIdNegative() {
+    // given
     long id = 10;
 
+    // when
     Mockito.when(tagDao.findById(id)).thenReturn(Optional.empty());
+
+    // then
     assertThrows(NotFoundException.class, () -> tagService.findById(String.valueOf(id)));
     Mockito.verify(tagDao, Mockito.times(1)).findById(id);
   }
 
   @Test
   void createPositive() {
+    // given
     long id = 1;
     String name = "Tag";
     TagDto expectedTagDto = new TagDto(id, name);
@@ -112,10 +113,13 @@ class TagServiceImplTest {
     Tag tag = new Tag();
     tag.setName(name);
 
+    // when
     Mockito.when(interpreter.fromDto(tagDto)).thenReturn(tag);
     Mockito.when(tagDao.save(tag)).thenReturn(Optional.of(expectedTag));
     Mockito.when(interpreter.toDto(expectedTag)).thenReturn(expectedTagDto);
     TagDto actual = tagService.create(tagDto);
+
+    // then
     assertEquals(expectedTagDto, actual);
     Mockito.verify(interpreter, Mockito.times(1)).fromDto(tagDto);
     Mockito.verify(tagDao, Mockito.times(1)).save(tag);
@@ -124,14 +128,18 @@ class TagServiceImplTest {
 
   @Test
   void createNegative() {
+    // given
     String name = "Tag";
     TagDto tagDto = new TagDto();
     tagDto.setName(name);
     Tag tag = new Tag();
     tag.setName(name);
 
+    // when
     Mockito.when(interpreter.fromDto(tagDto)).thenReturn(tag);
     Mockito.when(tagDao.save(tag)).thenReturn(Optional.empty());
+
+    // then
     assertThrows(CreationException.class, () -> tagService.create(tagDto));
     Mockito.verify(interpreter, Mockito.times(1)).fromDto(tagDto);
     Mockito.verify(tagDao, Mockito.times(1)).save(tag);
@@ -139,38 +147,54 @@ class TagServiceImplTest {
 
   @Test
   void removeById() {
+    // given
     long id = 1;
 
+    // when
     tagService.removeById(String.valueOf(id));
+
+    // then
     Mockito.verify(tagDao, Mockito.times(1)).removeById(id);
   }
 
   @Test
   void isExistByName() {
+    // given
     String name = Mockito.anyString();
 
+    // when
     tagService.isExists(name);
+
+    // then
     Mockito.verify(tagDao, Mockito.times(1)).isExists(name);
   }
 
   @Test
   void isExistById() {
+    // given
     long id = Mockito.anyLong();
 
+    // when
     tagService.isExists(id);
+
+    // then
     Mockito.verify(tagDao, Mockito.times(1)).isExists(id);
   }
 
   @Test
   void createTagsOnlyByNameOrId1() {
+    // given
     long id = 1;
     String name = "Tag";
     TagDto tagDto = new TagDto(id, name);
     Tag tag = new Tag(id, name);
 
+    // when
     Mockito.when(tagDao.isExists(tagDto.getId())).thenReturn(true);
     Mockito.when(tagDao.findById(tagDto.getId())).thenReturn(Optional.of(tag));
     tagService.createTagsOnlyByNameOrId(List.of(tagDto));
+
+    // then
     Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getId());
     Mockito.verify(tagDao, Mockito.times(1)).setDeleted(tagDto.getId(), false);
     Mockito.verify(tagDao, Mockito.times(1)).findById(tagDto.getId());
@@ -179,15 +203,19 @@ class TagServiceImplTest {
 
   @Test
   void createTagsOnlyByNameOrId2() {
+    // given
     long id = 1;
     String name = "Tag";
     TagDto tagDto = new TagDto(id, name);
     Tag tag = new Tag(id, name);
 
+    // when
     Mockito.when(tagDao.isExists(tagDto.getId())).thenReturn(false);
     Mockito.when(tagDao.isExists(tagDto.getName())).thenReturn(true);
     Mockito.when(tagDao.findByName(tagDto.getName())).thenReturn(Optional.of(tag));
     tagService.createTagsOnlyByNameOrId(List.of(tagDto));
+
+    // then
     Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getId());
     Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getName());
     Mockito.verify(tagDao, Mockito.times(1)).setDeleted(tagDto.getName(), false);
@@ -197,16 +225,20 @@ class TagServiceImplTest {
 
   @Test
   void createTagsOnlyByNameOrId3() {
+    // given
     long id = 1;
     String name = "Tag";
     TagDto tagDto = new TagDto(id, name);
     Tag tag = new Tag(id, name);
 
+    // when
     Mockito.when(tagDao.isExists(tagDto.getId())).thenReturn(false);
     Mockito.when(tagDao.isExists(tagDto.getName())).thenReturn(false);
     Mockito.when(interpreter.fromDto(tagDto)).thenReturn(tag);
     Mockito.when(tagDao.save(tag)).thenReturn(Optional.of(tag));
     tagService.createTagsOnlyByNameOrId(List.of(tagDto));
+
+    // then
     Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getId());
     Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getName());
     Mockito.verify(tagDao, Mockito.times(1)).save(tag);
