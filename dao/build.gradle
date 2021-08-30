@@ -17,6 +17,8 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.2.23.jre7'
     implementation 'org.springframework:spring-context:5.3.9'
     implementation 'org.springframework:spring-test:5.3.9'
+    implementation 'com.h2database:h2:1.4.200'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
 }
 
 test {

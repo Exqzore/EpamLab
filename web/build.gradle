@@ -25,6 +25,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0-rc1'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.0-rc1'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.0-rc1'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
     implementation project(":service")
 }
 

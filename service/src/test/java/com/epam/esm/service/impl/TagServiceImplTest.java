@@ -22,6 +22,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class TagServiceImplTest {
   @InjectMocks private TagServiceImpl tagService;
@@ -47,7 +49,7 @@ class TagServiceImplTest {
 
     // then
     assertEquals(expected, actual);
-    Mockito.verify(tagDao, Mockito.times(1)).findBySpecification(findAllTagsSpecification);
+    verify(tagDao, times(1)).findBySpecification(findAllTagsSpecification);
   }
 
   @Test
@@ -65,7 +67,7 @@ class TagServiceImplTest {
 
     // then
     assertEquals(tagDtoList, actual);
-    Mockito.verify(tagDao, Mockito.times(1))
+    verify(tagDao, times(1))
         .findBySpecification(findTagsByCertificateIdSpecification);
   }
 
@@ -84,8 +86,8 @@ class TagServiceImplTest {
 
     // then
     assertEquals(expected, actual);
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(tag);
-    Mockito.verify(tagDao, Mockito.times(1)).findById(id);
+    verify(interpreter, times(1)).toDto(tag);
+    verify(tagDao, times(1)).findById(id);
   }
 
   @Test
@@ -98,7 +100,7 @@ class TagServiceImplTest {
 
     // then
     assertThrows(NotFoundException.class, () -> tagService.findById(String.valueOf(id)));
-    Mockito.verify(tagDao, Mockito.times(1)).findById(id);
+    verify(tagDao, times(1)).findById(id);
   }
 
   @Test
@@ -121,9 +123,9 @@ class TagServiceImplTest {
 
     // then
     assertEquals(expectedTagDto, actual);
-    Mockito.verify(interpreter, Mockito.times(1)).fromDto(tagDto);
-    Mockito.verify(tagDao, Mockito.times(1)).save(tag);
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(expectedTag);
+    verify(interpreter, times(1)).fromDto(tagDto);
+    verify(tagDao, times(1)).save(tag);
+    verify(interpreter, times(1)).toDto(expectedTag);
   }
 
   @Test
@@ -141,8 +143,8 @@ class TagServiceImplTest {
 
     // then
     assertThrows(CreationException.class, () -> tagService.create(tagDto));
-    Mockito.verify(interpreter, Mockito.times(1)).fromDto(tagDto);
-    Mockito.verify(tagDao, Mockito.times(1)).save(tag);
+    verify(interpreter, times(1)).fromDto(tagDto);
+    verify(tagDao, times(1)).save(tag);
   }
 
   @Test
@@ -154,7 +156,7 @@ class TagServiceImplTest {
     tagService.removeById(String.valueOf(id));
 
     // then
-    Mockito.verify(tagDao, Mockito.times(1)).removeById(id);
+    verify(tagDao, times(1)).removeById(id);
   }
 
   @Test
@@ -166,7 +168,7 @@ class TagServiceImplTest {
     tagService.isExists(name);
 
     // then
-    Mockito.verify(tagDao, Mockito.times(1)).isExists(name);
+    verify(tagDao, times(1)).isExists(name);
   }
 
   @Test
@@ -178,7 +180,7 @@ class TagServiceImplTest {
     tagService.isExists(id);
 
     // then
-    Mockito.verify(tagDao, Mockito.times(1)).isExists(id);
+    verify(tagDao, times(1)).isExists(id);
   }
 
   @Test
@@ -195,10 +197,10 @@ class TagServiceImplTest {
     tagService.createTagsOnlyByNameOrId(List.of(tagDto));
 
     // then
-    Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getId());
-    Mockito.verify(tagDao, Mockito.times(1)).setDeleted(tagDto.getId(), false);
-    Mockito.verify(tagDao, Mockito.times(1)).findById(tagDto.getId());
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(tag);
+    verify(tagDao, times(1)).isExists(tagDto.getId());
+    verify(tagDao, times(1)).setDeleted(tagDto.getId(), false);
+    verify(tagDao, times(1)).findById(tagDto.getId());
+    verify(interpreter, times(1)).toDto(tag);
   }
 
   @Test
@@ -216,11 +218,11 @@ class TagServiceImplTest {
     tagService.createTagsOnlyByNameOrId(List.of(tagDto));
 
     // then
-    Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getId());
-    Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getName());
-    Mockito.verify(tagDao, Mockito.times(1)).setDeleted(tagDto.getName(), false);
-    Mockito.verify(tagDao, Mockito.times(1)).findByName(tagDto.getName());
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(tag);
+    verify(tagDao, times(1)).isExists(tagDto.getId());
+    verify(tagDao, times(1)).isExists(tagDto.getName());
+    verify(tagDao, times(1)).setDeleted(tagDto.getName(), false);
+    verify(tagDao, times(1)).findByName(tagDto.getName());
+    verify(interpreter, times(1)).toDto(tag);
   }
 
   @Test
@@ -239,9 +241,9 @@ class TagServiceImplTest {
     tagService.createTagsOnlyByNameOrId(List.of(tagDto));
 
     // then
-    Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getId());
-    Mockito.verify(tagDao, Mockito.times(1)).isExists(tagDto.getName());
-    Mockito.verify(tagDao, Mockito.times(1)).save(tag);
-    Mockito.verify(interpreter, Mockito.times(1)).toDto(tag);
+    verify(tagDao, times(1)).isExists(tagDto.getId());
+    verify(tagDao, times(1)).isExists(tagDto.getName());
+    verify(tagDao, times(1)).save(tag);
+    verify(interpreter, times(1)).toDto(tag);
   }
 }

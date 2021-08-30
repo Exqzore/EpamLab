@@ -15,9 +15,8 @@ import java.util.Optional;
 public class CertificateDaoImpl implements CertificateDao {
     private final JdbcTemplate jdbcTemplate;
 
-    private final String FIND_BY_ID = """
-            SELECT id, name, description, price, duration, create_date, last_update_date FROM certificates WHERE id=?
-            """;
+    private final String FIND_BY_ID =
+            "SELECT id, name, description, price, duration, create_date, last_update_date FROM certificates WHERE id=?";
     private final String SAVE = """
             INSERT INTO certificates (name, description, price, duration)
             VALUES(?,?,?,?) RETURNING id, name, description, price, duration, create_date, last_update_date
@@ -32,15 +31,11 @@ public class CertificateDaoImpl implements CertificateDao {
             WHERE id=?
             RETURNING id, name, description, price, duration, create_date, last_update_date
             """;
-    private final String REMOVE_BY_ID = """
-            DELETE FROM certificates WHERE id=?
-            """;
-    private final String REMOVE_ALL_TAGS_BY_CERTIFICATE_ID = """
-            DELETE FROM tag_certificate_membership WHERE certificate_id=?
-            """;
-    private final String ADD_TAG_TO_CERTIFICATE = """
-            INSERT INTO tag_certificate_membership (tag_id, certificate_id) VALUES(?,?)
-            """;
+    private final String REMOVE_BY_ID = "DELETE FROM certificates WHERE id=?";
+    private final String REMOVE_ALL_TAGS_BY_CERTIFICATE_ID =
+            "DELETE FROM tag_certificate_membership WHERE certificate_id=?";
+    private final String ADD_TAG_TO_CERTIFICATE =
+            "INSERT INTO tag_certificate_membership (tag_id, certificate_id) VALUES(?,?)";
 
     @Autowired
     public CertificateDaoImpl(JdbcTemplate jdbcTemplate) {
