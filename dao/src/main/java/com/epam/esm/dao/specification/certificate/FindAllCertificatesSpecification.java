@@ -3,7 +3,7 @@ package com.epam.esm.dao.specification.certificate;
 import com.epam.esm.dao.specification.Specification;
 
 public class FindAllCertificatesSpecification implements Specification {
-  private final String FIND_ALL_CERTIFICATES =
+  private static final String FIND_ALL_CERTIFICATES =
       "SELECT id, name, description, price, duration, create_date, last_update_date FROM certificates";
 
   @Override
@@ -12,7 +12,7 @@ public class FindAllCertificatesSpecification implements Specification {
   }
 
   @Override
-  public Object[] getArgument() {
+  public Object[] getArguments() {
     return new Object[] {};
   }
 }

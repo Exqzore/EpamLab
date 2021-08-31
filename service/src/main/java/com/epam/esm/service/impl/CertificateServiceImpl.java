@@ -18,18 +18,22 @@ import com.epam.esm.service.impl.util.CertificateFormatInterpreter;
 import com.epam.esm.validator.CertificateDtoValidator;
 import com.epam.esm.validator.StringIdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
+  @Value("postgres")
+  private String usedDB;
+
+  private static final String USED_DB = "postgres";
+
+  private static final String WITHOUT_OPTIONS = "";
+
   private static final String ORDER_BY = " ORDER BY ";
   private static final String SORT_PARAMS_PAIR_DELIMITER = ":";
   private static final String SORT_TYPE_ASC = "ASC";
@@ -68,8 +72,8 @@ public class CertificateServiceImpl implements CertificateService {
     StringBuilder stringBuilder = new StringBuilder();
     if (sortParams != null) {
       sortParams.forEach(
-          o -> {
-            String[] pair = o.split(SORT_PARAMS_PAIR_DELIMITER);
+          params -> {
+            String[] pair = params.split(SORT_PARAMS_PAIR_DELIMITER);
             if (pair.length != 2
                 || !List.of(
                         SORT_BY_NAME,
@@ -97,7 +101,12 @@ public class CertificateServiceImpl implements CertificateService {
   public List<CertificateDto> findByCriteria(
       String partOfNameOrDescription, String tagName, List<String> sortParams) {
     List<Certificate> certificates;
-    String sortOptions = calculateSortParams(sortParams);
+    String sortOptions;
+    if(usedDB.equals(USED_DB)) {
+      sortOptions = calculateSortParams(sortParams);
+    } else {
+      sortOptions = WITHOUT_OPTIONS;
+    }
     String part = calculatePattern(partOfNameOrDescription);
     if (partOfNameOrDescription != null && tagName != null) {
       certificates =
@@ -115,10 +124,12 @@ public class CertificateServiceImpl implements CertificateService {
       certificates =
           certificateDao.findBySpecification(new FindAllCertificatesSpecification(), sortOptions);
     }
-    certificates.forEach(c -> c.setTags(Collections.emptyList()));
+    certificates.forEach(certificate -> certificate.setTags(Collections.emptyList()));
     List<CertificateDto> certificateDtoList =
         certificates.stream().map(certificateInterpreter::toDto).collect(Collectors.toList());
-    certificateDtoList.forEach(o -> o.setTags(tagService.findByCertificateId(o.getId())));
+    certificateDtoList.forEach(
+        certificateDto ->
+            certificateDto.setTags(tagService.findByCertificateId(certificateDto.getId())));
     return certificateDtoList;
   }
 

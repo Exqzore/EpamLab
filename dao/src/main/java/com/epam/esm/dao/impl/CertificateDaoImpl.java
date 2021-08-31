@@ -6,22 +6,21 @@ import com.epam.esm.entity.Certificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class CertificateDaoImpl implements CertificateDao {
-    private final JdbcTemplate jdbcTemplate;
-
-    private final String FIND_BY_ID =
+    private static final BeanPropertyRowMapper<Certificate> rowMapper = new BeanPropertyRowMapper<>(Certificate.class);
+    private static final String FIND_BY_ID =
             "SELECT id, name, description, price, duration, create_date, last_update_date FROM certificates WHERE id=?";
-    private final String SAVE = """
+    private static final String SAVE = """
             INSERT INTO certificates (name, description, price, duration)
             VALUES(?,?,?,?) RETURNING id, name, description, price, duration, create_date, last_update_date
             """;
-    private final String UPDATE = """
+    private static final String UPDATE = """
             UPDATE certificates
             SET
             name=COALESCE(?, name),
@@ -31,11 +30,12 @@ public class CertificateDaoImpl implements CertificateDao {
             WHERE id=?
             RETURNING id, name, description, price, duration, create_date, last_update_date
             """;
-    private final String REMOVE_BY_ID = "DELETE FROM certificates WHERE id=?";
-    private final String REMOVE_ALL_TAGS_BY_CERTIFICATE_ID =
+    private static final String REMOVE_BY_ID = "DELETE FROM certificates WHERE id=?";
+    private static final String REMOVE_ALL_TAGS_BY_CERTIFICATE_ID =
             "DELETE FROM tag_certificate_membership WHERE certificate_id=?";
-    private final String ADD_TAG_TO_CERTIFICATE =
+    private static final String ADD_TAG_TO_CERTIFICATE =
             "INSERT INTO tag_certificate_membership (tag_id, certificate_id) VALUES(?,?)";
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public CertificateDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -46,20 +46,20 @@ public class CertificateDaoImpl implements CertificateDao {
     public List<Certificate> findBySpecification(Specification specification, String sortParams) {
         return jdbcTemplate.query(
                 specification.getSql() + sortParams,
-                new BeanPropertyRowMapper<>(Certificate.class),
-                specification.getArgument());
+                rowMapper,
+                specification.getArguments());
     }
 
     @Override
     public Optional<Certificate> findById(long id) {
-        return jdbcTemplate.query(FIND_BY_ID, new BeanPropertyRowMapper<>(Certificate.class), id).stream().findAny();
+        return jdbcTemplate.query(FIND_BY_ID, rowMapper, id).stream().findAny();
     }
 
     @Override
     public Optional<Certificate> save(Certificate certificate) {
         return jdbcTemplate.query(
                 SAVE,
-                new BeanPropertyRowMapper<>(Certificate.class),
+                rowMapper,
                 certificate.getName(),
                 certificate.getDescription(),
                 certificate.getPrice(),
@@ -71,7 +71,7 @@ public class CertificateDaoImpl implements CertificateDao {
     public Optional<Certificate> update(Certificate certificate) {
         return jdbcTemplate.query(
                 UPDATE,
-                new BeanPropertyRowMapper<>(Certificate.class),
+                rowMapper,
                 certificate.getName(),
                 certificate.getDescription(),
                 certificate.getPrice(),

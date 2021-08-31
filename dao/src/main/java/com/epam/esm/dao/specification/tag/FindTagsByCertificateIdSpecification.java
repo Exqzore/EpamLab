@@ -3,7 +3,7 @@ package com.epam.esm.dao.specification.tag;
 import com.epam.esm.dao.specification.Specification;
 
 public class FindTagsByCertificateIdSpecification implements Specification {
-    private final String FIND_TAGS_BY_CERTIFICATE_ID = """
+    private static final String FIND_TAGS_BY_CERTIFICATE_ID = """
             SELECT t.id, t.name FROM tags t
             JOIN tag_certificate_membership tcm ON t.id=tcm.tag_id
             WHERE tcm.certificate_id=? GROUP BY t.id
@@ -20,7 +20,7 @@ public class FindTagsByCertificateIdSpecification implements Specification {
     }
 
     @Override
-    public Object[] getArgument() {
+    public Object[] getArguments() {
         return new Object[]{certificateId};
     }
 }

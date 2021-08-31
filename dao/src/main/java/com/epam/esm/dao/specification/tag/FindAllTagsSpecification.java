@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FindAllTagsSpecification implements Specification {
-  private final String FIND_ALL_TAGS = "SELECT id, name FROM tags WHERE is_deleted=false";
+  private static final String FIND_ALL_TAGS = "SELECT id, name FROM tags WHERE is_deleted=false";
 
   @Override
   public String getSql() {
@@ -13,7 +13,7 @@ public class FindAllTagsSpecification implements Specification {
   }
 
   @Override
-  public Object[] getArgument() {
+  public Object[] getArguments() {
     return new Object[] {};
   }
 }

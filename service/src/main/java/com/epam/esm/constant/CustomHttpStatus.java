@@ -1,27 +1,27 @@
 package com.epam.esm.constant;
 
 /** The http response states interface. */
-public interface CustomHttpStatus {
-  int UNSUPPORTED_MEDIA_TYPE = 41500;
+public class CustomHttpStatus {
+  public static int UNSUPPORTED_MEDIA_TYPE = 41500;
 
   /** The error code of not finding the resource. */
-  interface NOT_FOUND {
-    int UNDEFINED = 40400;
-    int TAG = 40401;
-    int CERTIFICATE = 40402;
+  public static class NOT_FOUND {
+    public static int UNDEFINED = 40400;
+    public static int TAG = 40401;
+    public static int CERTIFICATE = 40402;
   }
 
   /** The error code of bad request. */
-  interface BAD_REQUEST {
-    int UNDEFINED = 40000;
-    int TAG = 40001;
-    int CERTIFICATE = 40002;
+  public static class BAD_REQUEST {
+    public static int UNDEFINED = 40000;
+    public static int TAG = 40001;
+    public static int CERTIFICATE = 40002;
   }
 
   /** The error code of conflict. */
-  interface CONFLICT {
-    int UNDEFINED = 40900;
-    int TAG = 40901;
-    int CERTIFICATE = 40902;
+  public static class  CONFLICT {
+    public static int UNDEFINED = 40900;
+    public static int TAG = 40901;
+    public static int CERTIFICATE = 40902;
   }
 }

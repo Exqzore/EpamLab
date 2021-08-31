@@ -14,5 +14,5 @@ public interface Specification {
    *
    * @return arguments
    */
-  Object[] getArgument();
+  Object[] getArguments();
 }
