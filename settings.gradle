@@ -1,0 +1,5 @@
+rootProject.name = 'CertificatesApp'
+include 'dao'
+include 'service'
+include 'web'
+
