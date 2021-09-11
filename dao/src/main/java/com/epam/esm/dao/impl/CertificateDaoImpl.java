@@ -41,34 +41,23 @@ public class CertificateDaoImpl implements CertificateDao, SortParameterInserter
 
   @Override
   public List<Certificate> findByCriteria(
-      CertificateSearchCriteria certificateSearchCriteria, int page, int size, List<String> sortParams) {
+      CertificateSearchCriteria certificateSearchCriteria,
+      int page,
+      int size,
+      List<String> sortParams) {
     List<SortingParameter<CertificateSortBy>> sorting =
-            sortingCalculator.calculateSortParams(CertificateSortBy.class, sortParams);
+        sortingCalculator.calculateSortParams(CertificateSortBy.class, sortParams);
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-    List<Predicate> predicates = new ArrayList<>();
     CriteriaQuery<Certificate> cq = cb.createQuery(Certificate.class);
     Root<Certificate> root = cq.from(Certificate.class);
     cq.select(root);
-    String partOfNameOrDescription = certificateSearchCriteria.getPartOfNameOrDescription();
-    if(partOfNameOrDescription != null) {
-      predicates.add(cb.like(root.get(NAME_PARAMETER), "%" + partOfNameOrDescription + "%"));
-      predicates.add(cb.like(root.get(DESCRIPTION_PARAMETER), "%" + partOfNameOrDescription + "%"));
-    }
-    if (certificateSearchCriteria.getTagNames() != null) {
-      Join<Certificate, Tag> tags = root.join("tags");
-      CriteriaBuilder.In<String> inTags = cb.in(tags.get("name"));
-      for (String tagName : certificateSearchCriteria.getTagNames()) {
-        inTags.value(tagName);
-      }
-      predicates.add(inTags);
-      cq.groupBy(root.get(ID_PARAMETER));
-      cq.having(cb.equal(cb.count(root.get(ID_PARAMETER)), certificateSearchCriteria.getTagNames().size()));
-    }
-    Predicate[] predArray = new Predicate[predicates.size()];
-    predicates.toArray(predArray);
-    cq.where(predArray);
+    buildQuery(certificateSearchCriteria, root, cq);
     addSortingParams(cq, cb, root, sorting);
-    return entityManager.createQuery(cq).setFirstResult((page - 1) * size).setMaxResults(size).getResultList();
+    return entityManager
+        .createQuery(cq)
+        .setFirstResult((page - 1) * size)
+        .setMaxResults(size)
+        .getResultList();
   }
 
   @Override
@@ -105,5 +94,33 @@ public class CertificateDaoImpl implements CertificateDao, SortParameterInserter
     CriteriaQuery<Certificate> criteriaQuery = cb.createQuery(Certificate.class);
     criteriaQuery.select(criteriaQuery.from(Certificate.class));
     return entityManager.createQuery(criteriaQuery).getResultList().size();
+  }
+
+  private void buildQuery(
+      CertificateSearchCriteria criteria,
+      Root<Certificate> root,
+      CriteriaQuery<Certificate> query) {
+    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+    List<Predicate> predicates = new ArrayList<>();
+    String partOfNameOrDescription = criteria.getPartOfNameOrDescription();
+    if (partOfNameOrDescription != null) {
+      predicates.add(builder.like(root.get(NAME_PARAMETER), "%" + partOfNameOrDescription + "%"));
+      predicates.add(
+          builder.like(root.get(DESCRIPTION_PARAMETER), "%" + partOfNameOrDescription + "%"));
+    }
+    if (criteria.getTagNames() != null) {
+      Join<Certificate, Tag> tags = root.join("tags");
+      CriteriaBuilder.In<String> inTags = builder.in(tags.get("name"));
+      for (String tagName : criteria.getTagNames()) {
+        inTags.value(tagName);
+      }
+      predicates.add(inTags);
+      query.groupBy(root.get(ID_PARAMETER));
+      query.having(
+          builder.equal(builder.count(root.get(ID_PARAMETER)), criteria.getTagNames().size()));
+    }
+    Predicate[] predArray = new Predicate[predicates.size()];
+    predicates.toArray(predArray);
+    query.where(predArray);
   }
 }

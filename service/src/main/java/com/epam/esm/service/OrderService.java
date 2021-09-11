@@ -12,7 +12,7 @@ public interface OrderService {
    * @param size size of page
    * @return Count of pages
    */
-  int findPaginated(int size);
+  int getCountOfPages(int size);
 
   /**
    * Find by order id.

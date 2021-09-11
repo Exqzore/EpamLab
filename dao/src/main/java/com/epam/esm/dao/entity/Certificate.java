@@ -1,6 +1,7 @@
 package com.epam.esm.dao.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class Certificate {
   private String description;
 
   @Column(name = "price")
-  private Double price;
+  private BigDecimal price;
 
   @Column(name = "duration")
   private Integer duration;
@@ -45,7 +46,7 @@ public class Certificate {
       Long id,
       String name,
       String description,
-      Double price,
+      BigDecimal price,
       Integer duration,
       LocalDateTime createDate,
       LocalDateTime lastUpdateDate,
@@ -84,11 +85,11 @@ public class Certificate {
     this.description = description;
   }
 
-  public Double getPrice() {
+  public BigDecimal getPrice() {
     return price;
   }
 
-  public void setPrice(Double price) {
+  public void setPrice(BigDecimal price) {
     this.price = price;
   }
 

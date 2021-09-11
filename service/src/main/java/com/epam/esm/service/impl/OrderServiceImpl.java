@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
-  public int findPaginated(int size) {
+  public int getCountOfPages(int size) {
     List<ErrorMessageDto> errors = paginateValidator.sizeValidate(size);
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
@@ -110,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
   @Transactional
   public OrderDto create(Long userId, OrderDto orderDto) {
     List<ErrorMessageDto> errors = idValidator.idValidate(userId);
-    errors.addAll(orderDtoValidator.orderDtoValidate(orderDto));
+    errors.addAll(orderDtoValidator.orderValidate(orderDto));
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
     }
@@ -125,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
                     certificateMapper.mapFromDto(certificateService.findById(certificate.getId())))
             .collect(Collectors.toList()));
     order.setCost(
-        order.getCertificates().stream().map(Certificate::getPrice).reduce(0D, Double::sum));
+        order.getCertificates().stream().map(Certificate::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
     order = orderDao.save(order);
     if (order == null) {
       throw new CreationException(

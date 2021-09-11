@@ -50,19 +50,7 @@ public class TagServiceImpl implements TagService {
 
   @Override
   @Transactional
-  public int findPaginated(int size) {
-    List<ErrorMessageDto> errors = paginateValidator.sizeValidate(size);
-    if (!errors.isEmpty()) {
-      throw new ValidationException(errors);
-    }
-    int countOfRecords = tagDao.findCountOfRecords();
-    int countPages = countOfRecords % size == 0 ? countOfRecords / size : countOfRecords / size + 1;
-    return countPages == 0 ? 1 : countPages;
-  }
-
-  @Override
-  @Transactional
-  public int findTagsOfCertificatePaginated(int size) {
+  public int getCountOfPages(int size) {
     List<ErrorMessageDto> errors = paginateValidator.sizeValidate(size);
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
@@ -86,14 +74,14 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public List<TagDto> findByCertificateId(
-      Long certificateId, int size, int page, List<String> sortParams) {
+      Long certificateId, int page, int size, List<String> sortParams) {
     List<ErrorMessageDto> errors = paginateValidator.sizeValidate(size);
     errors.addAll(paginateValidator.pageValidate(page));
     errors.addAll(idValidator.idValidate(certificateId));
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
     }
-    return tagDao.findByCertificateId(certificateId, size, page, sortParams).stream()
+    return tagDao.findByCertificateId(certificateId, page, size, sortParams).stream()
         .map(tag -> mapper.mapToDto(tag, false))
         .collect(Collectors.toList());
   }
@@ -118,7 +106,7 @@ public class TagServiceImpl implements TagService {
   @Override
   @Transactional
   public TagDto create(TagDto tagDto) {
-    List<ErrorMessageDto> errors = tagDtoValidator.tagDtoValidate(tagDto);
+    List<ErrorMessageDto> errors = tagDtoValidator.tagValidate(tagDto);
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
     }
@@ -159,7 +147,7 @@ public class TagServiceImpl implements TagService {
   @Override
   @Transactional
   public List<TagDto> createTagsOnlyByNameOrId(List<TagDto> tags) {
-    List<ErrorMessageDto> errors = tagDtoValidator.tagsDtoValidate(tags);
+    List<ErrorMessageDto> errors = tagDtoValidator.tagsValidate(tags);
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
     }

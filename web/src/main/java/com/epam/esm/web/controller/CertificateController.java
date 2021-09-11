@@ -37,7 +37,7 @@ public class CertificateController {
       @RequestParam(value = "tagName", required = false) List<String> tagNames,
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page,
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
-    int countPages = certificateService.findPaginated(size);
+    int countPages = certificateService.getCountOfPages(size);
     if (page > countPages) {
       throw new NotFoundException(
           new ErrorMessageDto(

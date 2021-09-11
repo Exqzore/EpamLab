@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,7 +58,8 @@ public class CertificateServiceImpl implements CertificateService {
   }
 
   @Override
-  public int findPaginated(int size) {
+  @Transactional
+  public int getCountOfPages(int size) {
     List<ErrorMessageDto> errors = paginateValidator.sizeValidate(size);
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
@@ -68,6 +70,7 @@ public class CertificateServiceImpl implements CertificateService {
   }
 
   @Override
+  @Transactional
   public List<CertificateDto> findByCriteria(
       String partOfNameOrDescription,
       List<String> tagNames,
@@ -86,11 +89,12 @@ public class CertificateServiceImpl implements CertificateService {
             size,
             sortParams)
         .stream()
-        .map(certificate -> mapper.mapToDto(certificate, false))
+        .map(certificate -> mapper.mapToDto(certificate, true))
         .collect(Collectors.toList());
   }
 
   @Override
+  @Transactional
   public CertificateDto findById(Long id) {
     List<ErrorMessageDto> errors = idValidator.idValidate(id);
     if (!errors.isEmpty()) {
@@ -110,7 +114,7 @@ public class CertificateServiceImpl implements CertificateService {
   @Transactional
   public CertificateDto create(CertificateDto certificateDto) {
     List<ErrorMessageDto> errors =
-        certificateDtoValidator.createCertificateDtoValidate(certificateDto);
+        certificateDtoValidator.creationValidate(certificateDto);
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
     }
@@ -159,7 +163,7 @@ public class CertificateServiceImpl implements CertificateService {
   @Transactional
   public CertificateDto update(Long id, CertificateDto certificateDto) {
     List<ErrorMessageDto> errors = idValidator.idValidate(id);
-    errors.addAll(certificateDtoValidator.updateCertificateDtoValidate(certificateDto));
+    errors.addAll(certificateDtoValidator.updateValidate(certificateDto));
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
     }
@@ -172,7 +176,7 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setDescription(certificateDto.getDescription());
       }
       if (certificateDto.getPrice() != null) {
-        certificate.setPrice(certificateDto.getPrice());
+        certificate.setPrice(BigDecimal.valueOf(certificateDto.getPrice()));
       }
       if (certificateDto.getDuration() != null) {
         certificate.setDuration(certificateDto.getDuration());

@@ -8,6 +8,7 @@ import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.mapper.Mapper;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ public class OrderMapper implements Mapper<Order, OrderDto> {
     Mapper<Certificate, CertificateDto> mapper = new CertificateMapper();
     OrderDto orderDto = new OrderDto();
     orderDto.setId(entity.getId());
-    orderDto.setCost(entity.getCost());
+    orderDto.setCost(entity.getCost().doubleValue());
     orderDto.setUserId(entity.getUser().getId());
     orderDto.setCreateDate(entity.getCreateDate().toString());
     if (mapNestedEntities) {
@@ -40,7 +41,7 @@ public class OrderMapper implements Mapper<Order, OrderDto> {
     Mapper<Certificate, CertificateDto> mapper = new CertificateMapper();
     Order order = new Order();
     order.setId(dto.getId());
-    order.setCost(dto.getCost());
+    order.setCost(BigDecimal.valueOf(dto.getCost()));
     User user = new User();
     user.setId(dto.getUserId());
     order.setUser(user);

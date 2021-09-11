@@ -14,7 +14,7 @@ import java.util.List;
 public class TagDtoValidator {
   private static final String NAME_REGEX = "[a-zA-Z][a-zA-Z0-9_]{2,30}";
 
-  public List<ErrorMessageDto> tagDtoValidate(TagDto tagDto) {
+  public List<ErrorMessageDto> tagValidate(TagDto tagDto) {
     Long id = tagDto.getId();
     List<ErrorMessageDto> errors = new ArrayList<>();
     if (id != null && id < 1) {
@@ -39,7 +39,7 @@ public class TagDtoValidator {
     return errors;
   }
 
-  public List<ErrorMessageDto> tagsDtoValidate(List<TagDto> tags) {
+  public List<ErrorMessageDto> tagsValidate(List<TagDto> tags) {
     List<ErrorMessageDto> errors = new ArrayList<>();
     if (tags != null) {
       tags.forEach(

@@ -20,7 +20,7 @@ public class OrderDtoValidator {
     this.certificateDtoValidator = certificateDtoValidator;
   }
 
-  public List<ErrorMessageDto> orderDtoValidate(OrderDto orderDto) {
+  public List<ErrorMessageDto> orderValidate(OrderDto orderDto) {
     List<ErrorMessageDto> errors = new ArrayList<>();
     if (orderDto.getCertificates() != null && orderDto.getCertificates().isEmpty()) {
       errors.add(

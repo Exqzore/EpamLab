@@ -1,6 +1,7 @@
 package com.epam.esm.dao.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public class Order {
   private Long id;
 
   @Column(name = "cost")
-  private Double cost;
+  private BigDecimal cost;
 
   @Column(name = "create_date")
   private LocalDateTime createDate;
@@ -32,7 +33,7 @@ public class Order {
   public Order() {}
 
   public Order(
-      Long id, Double cost, LocalDateTime createDate, User user, List<Certificate> certificates) {
+      Long id, BigDecimal cost, LocalDateTime createDate, User user, List<Certificate> certificates) {
     this.id = id;
     this.cost = cost;
     this.createDate = createDate;
@@ -48,11 +49,11 @@ public class Order {
     this.id = id;
   }
 
-  public Double getCost() {
+  public BigDecimal getCost() {
     return cost;
   }
 
-  public void setCost(Double cost) {
+  public void setCost(BigDecimal cost) {
     this.cost = cost;
   }
 

@@ -12,15 +12,7 @@ public interface TagService {
    * @param size size of page
    * @return Count of pages
    */
-  int findPaginated(int size);
-
-  /**
-   * Find count of pages.
-   *
-   * @param size size of page
-   * @return Count of pages
-   */
-  int findTagsOfCertificatePaginated(int size);
+  int getCountOfPages(int size);
 
   /**
    * Find all tags.

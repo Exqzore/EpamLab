@@ -24,7 +24,7 @@ public class CertificateDtoValidator {
     this.tagDtoValidator = tagDtoValidator;
   }
 
-  public List<ErrorMessageDto> createCertificateDtoValidate(CertificateDto certificateDto) {
+  public List<ErrorMessageDto> creationValidate(CertificateDto certificateDto) {
     List<ErrorMessageDto> errors = new ArrayList<>();
     String name = certificateDto.getName();
     if (name == null) {
@@ -74,12 +74,12 @@ public class CertificateDtoValidator {
               CustomHttpStatus.BadRequest.INVALID_CERTIFICATE_PRICE.getCode(),
               LanguageManager.getMessage(LocaleMessages.CERTIFICATE_PRICE_NEGATIVE)));
     }
-    errors.addAll(tagDtoValidator.tagsDtoValidate(certificateDto.getTags()));
+    errors.addAll(tagDtoValidator.tagsValidate(certificateDto.getTags()));
     errors = new HashSet<>(errors).stream().toList();
     return errors;
   }
 
-  public List<ErrorMessageDto> updateCertificateDtoValidate(CertificateDto certificateDto) {
+  public List<ErrorMessageDto> updateValidate(CertificateDto certificateDto) {
     List<ErrorMessageDto> errors = new ArrayList<>();
     String name = certificateDto.getName();
     if (name != null && !name.matches(NAME_REGEX)) {
@@ -109,7 +109,7 @@ public class CertificateDtoValidator {
               CustomHttpStatus.BadRequest.INVALID_CERTIFICATE_PRICE.getCode(),
               LanguageManager.getMessage(LocaleMessages.CERTIFICATE_PRICE_NEGATIVE)));
     }
-    errors.addAll(tagDtoValidator.tagsDtoValidate(certificateDto.getTags()));
+    errors.addAll(tagDtoValidator.tagsValidate(certificateDto.getTags()));
     errors = new HashSet<>(errors).stream().toList();
     return errors;
   }

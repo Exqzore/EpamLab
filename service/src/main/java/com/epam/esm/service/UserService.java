@@ -13,7 +13,7 @@ public interface UserService {
    * @param size size of page
    * @return Count of pages
    */
-  int findPaginated(int size);
+  int getCountOfPages(int size);
 
   /**
    * Find count of pages.
@@ -21,7 +21,7 @@ public interface UserService {
    * @param size size of page
    * @return Count of pages
    */
-  int findUserOrdersPaginated(Long id, int size);
+  int getCountOfPagesOfUserOrders(Long id, int size);
 
   /**
    * Find by user id.

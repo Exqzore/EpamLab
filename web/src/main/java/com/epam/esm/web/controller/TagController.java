@@ -35,7 +35,7 @@ public class TagController {
       @RequestParam(value = "sort", required = false) List<String> sortParams,
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page,
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
-    int countPages = tagService.findPaginated(size);
+    int countPages = tagService.getCountOfPages(size);
     if (page > countPages) {
       throw new NotFoundException(
           new ErrorMessageDto(

@@ -12,7 +12,7 @@ public interface CertificateService {
    * @param size size of page
    * @return Count of pages
    */
-  int findPaginated(int size);
+  int getCountOfPages(int size);
 
   /**
    * Find all certificates.

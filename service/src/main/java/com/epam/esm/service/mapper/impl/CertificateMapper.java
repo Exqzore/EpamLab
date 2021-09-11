@@ -7,6 +7,7 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.mapper.Mapper;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class CertificateMapper implements Mapper<Certificate, CertificateDto> {
     certificateDto.setId(entity.getId());
     certificateDto.setName(entity.getName());
     certificateDto.setDescription(entity.getDescription());
-    certificateDto.setPrice(entity.getPrice());
+    certificateDto.setPrice(entity.getPrice().doubleValue());
     certificateDto.setDuration(entity.getDuration());
     if (mapNestedEntities) {
       Set<Tag> tags = entity.getTags();
@@ -43,7 +44,7 @@ public class CertificateMapper implements Mapper<Certificate, CertificateDto> {
     certificate.setId(dto.getId());
     certificate.setName(dto.getName());
     certificate.setDescription(dto.getDescription());
-    certificate.setPrice(dto.getPrice());
+    certificate.setPrice(BigDecimal.valueOf(dto.getPrice()));
     certificate.setDuration(dto.getDuration());
     List<TagDto> tagDtoList = dto.getTags();
     if (tagDtoList != null) {

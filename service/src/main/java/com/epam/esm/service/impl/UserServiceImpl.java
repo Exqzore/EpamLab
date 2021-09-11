@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public int findPaginated(int size) {
+  public int getCountOfPages(int size) {
     List<ErrorMessageDto> errors = paginateValidator.sizeValidate(size);
     if (!errors.isEmpty()) {
       throw new ValidationException(errors);
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public int findUserOrdersPaginated(Long id, int size) {
+  public int getCountOfPagesOfUserOrders(Long id, int size) {
     List<ErrorMessageDto> errors = paginateValidator.sizeValidate(size);
     errors.addAll(idValidator.idValidate(id));
     if (!errors.isEmpty()) {

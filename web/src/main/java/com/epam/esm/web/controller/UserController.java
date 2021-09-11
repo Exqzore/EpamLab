@@ -35,7 +35,7 @@ public class UserController {
       @RequestParam(value = "sort", required = false) List<String> sortParams,
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page,
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
-    int countPages = userService.findPaginated(size);
+    int countPages = userService.getCountOfPages(size);
     if (page > countPages) {
       throw new NotFoundException(
           new ErrorMessageDto(
@@ -60,7 +60,7 @@ public class UserController {
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) Integer page,
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
       @PathVariable Long id) {
-    int countPages = userService.findUserOrdersPaginated(id, size);
+    int countPages = userService.getCountOfPagesOfUserOrders(id, size);
     if (page > countPages) {
       throw new NotFoundException(
           new ErrorMessageDto(
