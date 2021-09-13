@@ -6,15 +6,7 @@ import com.epam.esm.service.dto.UserDto;
 import java.util.List;
 
 /** The interface User service. */
-public interface UserService {
-  /**
-   * Find count of pages.
-   *
-   * @param size size of page
-   * @return Count of pages
-   */
-  int getCountOfPages(int size);
-
+public interface UserService extends GeneralService<UserDto> {
   /**
    * Find count of pages.
    *
@@ -22,14 +14,6 @@ public interface UserService {
    * @return Count of pages
    */
   int getCountOfPagesOfUserOrders(Long id, int size);
-
-  /**
-   * Find by user id.
-   *
-   * @param id the user id
-   * @return The founded user
-   */
-  UserDto findById(Long id);
 
   /**
    * Find all users.

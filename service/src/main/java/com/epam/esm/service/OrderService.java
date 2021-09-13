@@ -5,23 +5,7 @@ import com.epam.esm.service.dto.OrderDto;
 import java.util.List;
 
 /** The interface Order service. */
-public interface OrderService {
-  /**
-   * Find count of pages.
-   *
-   * @param size size of page
-   * @return Count of pages
-   */
-  int getCountOfPages(int size);
-
-  /**
-   * Find by order id.
-   *
-   * @param id the order id
-   * @return The founded order
-   */
-  OrderDto findById(Long id);
-
+public interface OrderService extends GeneralService<OrderDto>, Deletable {
   /**
    * Find all orders.
    *
@@ -40,11 +24,4 @@ public interface OrderService {
    * @return The created certificate
    */
   OrderDto create(Long userId, OrderDto orderDto);
-
-  /**
-   * Remove order by id.
-   *
-   * @param id the order id
-   */
-  void removeById(Long id);
 }

@@ -1,12 +1,14 @@
-package com.epam.esm.dao.impl.sorting;
+package com.epam.esm.dao.impl.util;
+
+import com.epam.esm.dao.impl.sorting.SortingParameter;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import java.util.List;
 
-public interface SortParameterInserter {
-    default <R, T extends Enum<T>, X, Z> void addSortingParams (
+public class SortParameterInserter {
+    public static  <R, T extends Enum<T>, X, Z> void addSortingParams (
             CriteriaQuery<R> cq,
             CriteriaBuilder cb,
             From<X, Z> root,

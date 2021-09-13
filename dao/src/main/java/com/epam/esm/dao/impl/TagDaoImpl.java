@@ -4,12 +4,11 @@ import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.entity.Certificate;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.exception.NoSuchResultException;
-import com.epam.esm.dao.impl.sorting.SortParameterInserter;
 import com.epam.esm.dao.impl.sorting.SortingParameter;
 import com.epam.esm.dao.impl.sorting.TagSortBy;
+import com.epam.esm.dao.impl.util.SortParameterInserter;
 import com.epam.esm.dao.impl.util.SortingCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -23,8 +22,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
-@EntityScan(basePackages = "com.epam.esm.dao.entity")
-public class TagDaoImpl implements TagDao, SortParameterInserter {
+public class TagDaoImpl implements TagDao {
   private static final String NAME_PARAMETER = "name";
   private static final String ID_PARAMETER = "id";
   private static final String IS_DELETED_PARAMETER = "isDeleted";
@@ -66,7 +64,7 @@ public class TagDaoImpl implements TagDao, SortParameterInserter {
     CriteriaQuery<Tag> cq = cb.createQuery(Tag.class);
     Root<Tag> root = cq.from(Tag.class);
     cq.select(root).where(cb.equal(root.get(IS_DELETED_PARAMETER), false));
-    addSortingParams(cq, cb, root, sorting);
+    SortParameterInserter.addSortingParams(cq, cb, root, sorting);
     return entityManager.createQuery(cq).setFirstResult((page - 1) * size).setMaxResults(size).getResultList();
   }
 
@@ -81,7 +79,7 @@ public class TagDaoImpl implements TagDao, SortParameterInserter {
     cq.where(cb.equal(root.get(ID_PARAMETER), certificateId));
     Join<Certificate, Tag> tags = root.join("tags");
     cq.select(tags);
-    addSortingParams(cq, cb, tags, sorting);
+    SortParameterInserter.addSortingParams(cq, cb, tags, sorting);
     return entityManager.createQuery(cq).setFirstResult((page - 1) * size).setMaxResults(size).getResultList();
   }
 

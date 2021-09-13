@@ -5,15 +5,7 @@ import com.epam.esm.service.dto.CertificateDto;
 import java.util.List;
 
 /** The interface Certificate service. */
-public interface CertificateService {
-  /**
-   * Find count of pages.
-   *
-   * @param size size of page
-   * @return Count of pages
-   */
-  int getCountOfPages(int size);
-
+public interface CertificateService extends GeneralService<CertificateDto>, Creatable<CertificateDto>, Deletable {
   /**
    * Find all certificates.
    *
@@ -30,29 +22,6 @@ public interface CertificateService {
       List<String> sortParams,
       int page,
       int size);
-
-  /**
-   * Find by certificate id.
-   *
-   * @param id the certificate id
-   * @return The founded certificate
-   */
-  CertificateDto findById(Long id);
-
-  /**
-   * Create certificate.
-   *
-   * @param certificateDto the certificate to be placed in the database
-   * @return The created certificate
-   */
-  CertificateDto create(CertificateDto certificateDto);
-
-  /**
-   * Remove certificate by id.
-   *
-   * @param id the certificate id
-   */
-  void removeById(Long id);
 
   /**
    * Update certificate.

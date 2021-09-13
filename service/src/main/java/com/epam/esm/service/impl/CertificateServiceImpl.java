@@ -194,7 +194,7 @@ public class CertificateServiceImpl implements CertificateService {
                 CustomHttpStatus.Conflict.CERTIFICATE.getCode(),
                 LanguageManager.getMessage(LocaleMessages.CERTIFICATE_NOT_UPDATE)));
       }
-      return mapper.mapToDto(certificate, false);
+      return mapper.mapToDto(certificate, true);
     } else {
       throw new NotFoundException(
           new ErrorMessageDto(

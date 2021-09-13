@@ -4,11 +4,10 @@ import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.entity.Order;
 import com.epam.esm.dao.exception.NoSuchResultException;
 import com.epam.esm.dao.impl.sorting.OrderSortBy;
-import com.epam.esm.dao.impl.sorting.SortParameterInserter;
 import com.epam.esm.dao.impl.sorting.SortingParameter;
+import com.epam.esm.dao.impl.util.SortParameterInserter;
 import com.epam.esm.dao.impl.util.SortingCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -19,8 +18,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
-@EntityScan(basePackages = "com.epam.esm.dao.entity")
-public class OrderDaoImpl implements OrderDao, SortParameterInserter {
+public class OrderDaoImpl implements OrderDao {
   private final SortingCalculator<OrderSortBy> sortingCalculator;
   private EntityManager entityManager;
 
@@ -42,13 +40,17 @@ public class OrderDaoImpl implements OrderDao, SortParameterInserter {
   @Override
   public List<Order> findAll(int page, int size, List<String> sortParams) {
     List<SortingParameter<OrderSortBy>> sorting =
-            sortingCalculator.calculateSortParams(OrderSortBy.class, sortParams);
+        sortingCalculator.calculateSortParams(OrderSortBy.class, sortParams);
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Order> cq = cb.createQuery(Order.class);
     Root<Order> root = cq.from(Order.class);
     cq.select(root);
-    addSortingParams(cq, cb, root, sorting);
-    return entityManager.createQuery(cq).setFirstResult((page - 1) * size).setMaxResults(size).getResultList();
+    SortParameterInserter.addSortingParams(cq, cb, root, sorting);
+    return entityManager
+        .createQuery(cq)
+        .setFirstResult((page - 1) * size)
+        .setMaxResults(size)
+        .getResultList();
   }
 
   @Override

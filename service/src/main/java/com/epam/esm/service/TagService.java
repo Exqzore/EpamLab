@@ -5,15 +5,7 @@ import com.epam.esm.service.dto.TagDto;
 import java.util.List;
 
 /** The interface Tag service. */
-public interface TagService {
-  /**
-   * Find count of pages.
-   *
-   * @param size size of page
-   * @return Count of pages
-   */
-  int getCountOfPages(int size);
-
+public interface TagService extends GeneralService<TagDto>, Creatable<TagDto>, Deletable {
   /**
    * Find all tags.
    *
@@ -34,29 +26,6 @@ public interface TagService {
    * @return A list of tags
    */
   List<TagDto> findByCertificateId(Long certificateId, int page, int size, List<String> sortParams);
-
-  /**
-   * Find by tag id.
-   *
-   * @param id the tag id
-   * @return The founded tag
-   */
-  TagDto findById(Long id);
-
-  /**
-   * Create tag.
-   *
-   * @param tagDto the tag to be placed in the database
-   * @return The created tag
-   */
-  TagDto create(TagDto tagDto);
-
-  /**
-   * Remove tag by id.
-   *
-   * @param id the tag id
-   */
-  void removeById(Long id);
 
   /**
    * Create tagS.
