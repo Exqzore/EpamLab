@@ -1,0 +1,27 @@
+package com.epam.esm.service;
+
+import com.epam.esm.service.dto.OrderDto;
+
+import java.util.List;
+
+/** The interface Order service. */
+public interface OrderService extends GeneralService<OrderDto>, Deletable {
+  /**
+   * Find all orders.
+   *
+   * @param page number of page
+   * @param size page size
+   * @param sortParams parameters of sorting
+   * @return A list of orders
+   */
+  List<OrderDto> findAll(int page, int size, List<String> sortParams);
+
+  /**
+   * Create order.
+   *
+   * @param userId owner id
+   * @param orderDto the order to be placed in the database
+   * @return The created certificate
+   */
+  OrderDto create(Long userId, OrderDto orderDto);
+}

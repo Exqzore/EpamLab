@@ -1,0 +1,26 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.4'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.epam.esm'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '16'
+
+def springBootVersion = '2.5.4'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+	implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+	implementation 'com.jayway.jsonpath:json-path:2.6.0'
+	implementation project(":web")
+}
+
+test {
+	useJUnitPlatform()
+}
